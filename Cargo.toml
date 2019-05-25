@@ -1,0 +1,24 @@
+[package]
+name = "nucleo-h743zi"
+version = "0.1.0"
+authors = ["Andrew Straw <strawman@astraw.com>"]
+edition = "2018"
+categories = ["embedded", "hardware-support", "no-std"]
+description = "Examples programs for nucleo-H743zi board"
+keywords = ["arm", "cortex-m", "stm32h7xx", "hal"]
+license = "0BSD"
+
+[dependencies]
+cortex-m-rt = "0.6.7"
+nb = "0.1.1"
+embedded-hal = "0.2.3"
+panic-halt = "0.2"
+stm32h7xx-hal = {git="https://github.com/astraw/stm32h7xx-hal", features=["stm32h7x3"]}
+
+[profile.dev]
+debug = true
+
+[profile.release]
+debug = true
+lto = true
+opt-level = "s"
