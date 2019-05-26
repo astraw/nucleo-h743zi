@@ -7,6 +7,7 @@ categories = ["embedded", "hardware-support", "no-std"]
 description = "Examples programs for nucleo-H743zi board"
 keywords = ["arm", "cortex-m", "stm32h7xx", "hal"]
 license = "0BSD"
+repository = "https://github.com/astraw/nucleo-h743zi"
 
 [dependencies]
 cortex-m-rt = "0.6.7"
