@@ -1,0 +1,24 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "cortex-debug",
+            "request": "launch",
+            "name": "Debug Blinky",
+            "servertype": "openocd",
+            "gdbPath": "/usr/bin/gdb-multiarch",
+            "cwd": "${workspaceRoot}",
+            "device": "STM32H743xx",
+            "svdFile": "./STM32H743.svd",
+            "preLaunchTask": "cargo build",
+            "executable": "${workspaceFolder}/target/thumbv7em-none-eabihf/debug/nucleo-h743zi",
+            "configFiles": [
+                "./openocd.cfg"
+            ],
+            "runToMain": true,
+        }
+    ]
+}
