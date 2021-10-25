@@ -11,10 +11,10 @@ use panic_halt as _;
 
 use stm32h7xx_hal::{
     prelude::*,
-    serial::{self, Serial, Error},
-    block
+    serial::{self, Serial, Error}
 };
 use core::fmt::Write;
+use nb::block;
 
 use embedded_hal::digital::v2::OutputPin;
 use cortex_m_rt::entry;
