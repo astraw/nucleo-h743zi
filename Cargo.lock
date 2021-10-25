@@ -106,7 +106,6 @@ dependencies = [
  "cortex-m",
  "cortex-m-rt",
  "embedded-hal",
- "nb 1.0.0",
  "panic-halt",
  "stm32h7xx-hal",
 ]

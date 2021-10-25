@@ -14,7 +14,6 @@ cortex-m-rt = "0.6.12"
 cortex-m = "0.7.1"
 embedded-hal = "0.2.6"
 panic-halt = "0.2"
-nb = "1.0.0"
 stm32h7xx-hal = { version="0.10.0", features=["stm32h743v"] }
 
 [profile.dev]

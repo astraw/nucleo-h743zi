@@ -10,6 +10,8 @@ use panic_halt as _;
 
 use stm32h7xx_hal::{
     prelude::*,
+    timer::Timer,
+    block
 };
 
 use cortex_m_rt::entry;
@@ -20,7 +22,6 @@ use embedded_hal::digital::v2::OutputPin;
 fn main() -> ! {
     // Get access to the device specific peripherals from the peripheral access crate
     let dp = stm32h7xx_hal::stm32::Peripherals::take().unwrap();
-    let cp = cortex_m::Peripherals::take().unwrap();
 
     // Take ownership over the RCC devices and convert them into the corresponding HAL structs
     let rcc = dp.RCC.constrain();
@@ -43,19 +44,16 @@ fn main() -> ! {
     let mut ld3 = gpiob.pb14.into_push_pull_output();
     ld3.set_high().unwrap();
 
-    let one_second = ccdr.clocks.sys_ck().0;
 
-    // Get the delay provider.
-    // TODO: Unfortunately, this somehow does not work..
-    // let mut delay = cp.SYST.delay(ccdr.clocks);
+    // Configure the timer to trigger an update every second
+    let mut timer = Timer::tim1(dp.TIM1, ccdr.peripheral.TIM1, &ccdr.clocks);
+    timer.start(1.hz());
 
     // Wait for the timer to trigger an update and change the state of the LED
     loop {
         ld2.set_high().unwrap();
-        //delay.delay_ms(2000u16);
-        cortex_m::asm::delay(one_second);
+        block!(timer.wait()).unwrap();
         ld2.set_low().unwrap();
-        //delay.delay_ms(2000u16);
-        cortex_m::asm::delay(one_second);
+        block!(timer.wait()).unwrap();
     }
 }
