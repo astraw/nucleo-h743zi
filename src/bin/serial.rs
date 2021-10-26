@@ -82,7 +82,5 @@ fn main() -> ! {
                 panic!("");
             },
         }
-        let received = block!(rx.read()).unwrap();
-        block!(tx.write(received)).ok();
     }
 }
