@@ -3,6 +3,11 @@
 //! This assumes that serial TX is PD8 and RX is PD9. This is true for the
 //! nucleo-h743zi board in which these are connected to the ST-LINK virtual COM
 //! port. Furthermore, pb7 is used as LD2 and pb14 is used as LD3.
+//!
+//! Connect the STM32H743ZI board via the USB connector and check the name of
+//! the COM port on Windows or the /dev/ACMx port on Unix systems. Open a serial terminal
+//! and connect to that serial port with a baudrate of 115200, for example with
+//! `picocom` or Putty.
 
 #![no_std]
 #![no_main]
