@@ -10,11 +10,19 @@ license = "0BSD"
 repository = "https://github.com/astraw/nucleo-h743zi"
 
 [dependencies]
-cortex-m-rt = "0.6.7"
-nb = "0.1.1"
-embedded-hal = "0.2.3"
+cortex-m-rt = "0.6.12"
+cortex-m = "0.7.1"
+embedded-hal = "0.2.6"
 panic-halt = "0.2"
-stm32h7xx-hal = {version="0.1", features=["stm32h7x3"]}
+log = "0.4.11"
+cortex-m-log = { version = "~0.7.0", features = ["itm", "semihosting", "log-integration"] }
+lazy_static = { version = "1.4.0", features = ["spin_no_std"] }
+nb = "1.0.0"
+stm32h7xx-hal = { version="0.10.0", features=["stm32h743v"] }
+
+[features]
+default = ["enable-itm"]
+enable-itm = []
 
 [profile.dev]
 debug = true
