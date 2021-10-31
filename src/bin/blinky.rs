@@ -8,12 +8,12 @@
 
 use panic_halt as _;
 
-use nb::block;
-
 use stm32h7xx_hal::{
     prelude::*,
     timer::Timer,
+    block
 };
+
 use cortex_m_rt::entry;
 
 use embedded_hal::digital::v2::OutputPin;
@@ -23,36 +23,37 @@ fn main() -> ! {
     // Get access to the device specific peripherals from the peripheral access crate
     let dp = stm32h7xx_hal::stm32::Peripherals::take().unwrap();
 
-    // Take ownership over the raw flash and rcc devices and convert them into the corresponding
-    // HAL structs
-    let mut flash = dp.FLASH.constrain();
-    let mut rcc = dp.RCC.constrain();
+    // Take ownership over the RCC devices and convert them into the corresponding HAL structs
+    let rcc = dp.RCC.constrain();
 
-    // Freeze the configuration of all the clocks in the system and store the frozen frequencies in
-    // `clocks`
-    let clocks = rcc.cfgr.freeze(&mut flash.acr);
+    let pwr = dp.PWR.constrain();
+    let pwrcfg = pwr.freeze();
+
+    // Freeze the configuration of all the clocks in the system and
+    // retrieve the Core Clock Distribution and Reset (CCDR) object
+    let rcc = rcc.use_hse(8.mhz()).bypass_hse();
+    let ccdr = rcc.freeze(pwrcfg, &dp.SYSCFG);
 
     // Acquire the GPIOB peripheral
-    let mut gpiob = dp.GPIOB.split(&mut rcc.ahb4);
+    let gpiob = dp.GPIOB.split(ccdr.peripheral.GPIOB);
 
     // Configure gpio B pin 7 as a push-pull output.
-    let mut ld2 = gpiob.pb7
-        .into_push_pull_output(&mut gpiob.moder, &mut gpiob.otyper);
+    let mut ld2 = gpiob.pb7.into_push_pull_output();
 
     // Configure gpio B pin 14 as a push-pull output.
-    let mut ld3 = gpiob.pb14
-        .into_push_pull_output(&mut gpiob.moder, &mut gpiob.otyper);
+    let mut ld3 = gpiob.pb14.into_push_pull_output();
     ld3.set_high().unwrap();
 
+
     // Configure the timer to trigger an update every second
-    let mut timer = Timer::tim1(dp.TIM1, 1.hz(), clocks, &mut rcc.apb2);
+    let mut timer = Timer::tim1(dp.TIM1, ccdr.peripheral.TIM1, &ccdr.clocks);
+    timer.start(1.hz());
 
     // Wait for the timer to trigger an update and change the state of the LED
     loop {
-        block!(timer.wait()).unwrap();
         ld2.set_high().unwrap();
         block!(timer.wait()).unwrap();
         ld2.set_low().unwrap();
+        block!(timer.wait()).unwrap();
     }
-
 }
