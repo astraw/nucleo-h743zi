@@ -1,0 +1,21 @@
+on: [push]
+
+name: build
+
+jobs:
+  build:
+    name: build examples
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          # Build for Cortex-M7F with FPU support
+          target: thumbv7em-none-eabihf
+          override: true
+      - uses: actions-rs/cargo@v1
+        with:
+          use-cross: true
+          command: build
+          args: --target thumbv7em-none-eabihf
