@@ -3,6 +3,11 @@
 //! This assumes that serial TX is PD8 and RX is PD9. This is true for the
 //! nucleo-h743zi board in which these are connected to the ST-LINK virtual COM
 //! port. Furthermore, pb7 is used as LD2 and pb14 is used as LD3.
+//!
+//! Connect the STM32H743ZI board via the USB connector and check the name of
+//! the COM port on Windows or the /dev/ACMx port on Unix systems. Open a serial terminal
+//! and connect to that serial port with a baudrate of 115200, for example with
+//! `picocom` or Putty.
 
 #![no_std]
 #![no_main]
@@ -11,58 +16,59 @@ use panic_halt as _;
 
 use stm32h7xx_hal::{
     prelude::*,
-    serial::{self, Serial, Error},
+    serial::{self, Serial, Error}
 };
-
-use cortex_m_rt::entry;
+use core::fmt::Write;
+use nb::block;
 
 use embedded_hal::digital::v2::OutputPin;
+use cortex_m_rt::entry;
 
 #[entry]
 fn main() -> ! {
     // Get access to the device specific peripherals from the peripheral access crate
     let dp = stm32h7xx_hal::stm32::Peripherals::take().unwrap();
 
-    // Take ownership over the raw flash and rcc devices and convert them into the corresponding
-    // HAL structs
-    let mut flash = dp.FLASH.constrain();
-    let mut rcc = dp.RCC.constrain();
+    // Take ownership over the RCC devices and convert them into the corresponding HAL structs
+    let rcc = dp.RCC.constrain();
 
-    // Freeze the configuration of all the clocks in the system and store the frozen frequencies in
-    // `clocks`
-    let clocks = rcc.cfgr.freeze(&mut flash.acr);
+    let pwr = dp.PWR.constrain();
+    let pwrcfg = pwr.freeze();
+
+    // Freeze the configuration of all the clocks in the system and
+    // retrieve the Core Clock Distribution and Reset (CCDR) object
+    let rcc = rcc.sys_ck(400.mhz()).use_hse(8.mhz()).bypass_hse();
+    let ccdr = rcc.freeze(pwrcfg, &dp.SYSCFG);
 
     // Acquire the GPIOB peripheral
-    let mut gpiob = dp.GPIOB.split(&mut rcc.ahb4);
+    let gpiob = dp.GPIOB.split(ccdr.peripheral.GPIOB);
 
     // Configure gpio B pin 7 as a push-pull output.
-    let mut ld2 = gpiob.pb7
-        .into_push_pull_output(&mut gpiob.moder, &mut gpiob.otyper);
-
+    let mut ld2 = gpiob.pb7.into_push_pull_output();
     // Configure gpio B pin 14 as a push-pull output.
-    let mut ld3 = gpiob.pb14
-        .into_push_pull_output(&mut gpiob.moder, &mut gpiob.otyper);
+    let mut ld3 = gpiob.pb14.into_push_pull_output();
 
     // Acquire the GPIOD peripheral
-    let mut gpiod = dp.GPIOD.split(&mut rcc.ahb4);
+    let gpiod = dp.GPIOD.split(ccdr.peripheral.GPIOD);
 
     // initialize serial
-    let tx = gpiod.pd8.into_af7(&mut gpiod.moder, &mut gpiod.afrh);
-    let rx = gpiod.pd9.into_af7(&mut gpiod.moder, &mut gpiod.afrh);
+    gpiod.pd8.into_alternate_af7();
+    gpiod.pd9.into_alternate_af7();
 
-    let mut serial = Serial::usart3(
+    let serial = Serial::usart3(
         dp.USART3,
-        (tx, rx),
-        115_200.bps(),
-        clocks,
-        &mut rcc.apb1,
-    );
+        serial::config::Config::default().baudrate(115200.bps()),
+        ccdr.peripheral.USART3,
+        &ccdr.clocks
+    ).unwrap();
 
-    serial.listen(serial::Event::Rxne);
-    // serial.listen(serial::Event::Txe); // TODO I am confused why this is not needed.
     let (mut tx, mut rx) = serial.split();
 
+    // core::fmt::Write is implemented for tx.
+    writeln!(tx, "Hello World\r").unwrap();
+    writeln!(tx, "Entering echo mode..\r").unwrap();
     loop {
+        // Echo what is received on the serial link.
         match rx.read() {
             Ok(c) => {
                 tx.write(c).unwrap();
@@ -81,6 +87,5 @@ fn main() -> ! {
                 panic!("");
             },
         }
-        // cortex_m::asm::wfi();
     }
 }
