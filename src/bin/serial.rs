@@ -19,7 +19,6 @@ use stm32h7xx_hal::{
     serial::{self, Serial, Error}
 };
 use core::fmt::Write;
-use nb::block;
 
 use embedded_hal::digital::v2::OutputPin;
 use cortex_m_rt::entry;

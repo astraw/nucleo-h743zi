@@ -19,6 +19,23 @@
                 "./openocd.cfg"
             ],
             "runToMain": true,
+        },
+
+        {
+            "type": "cortex-debug",
+            "request": "launch",
+            "name": "Debug SPI",
+            "servertype": "openocd",
+            "gdbPath": "/usr/bin/gdb-multiarch",
+            "cwd": "${workspaceRoot}",
+            "device": "STM32H743xx",
+            "svdFile": "./STM32H743.svd",
+            "preLaunchTask": "cargo build spi",
+            "executable": "${workspaceFolder}/target/thumbv7em-none-eabihf/debug/spi",
+            "configFiles": [
+                "./openocd.cfg"
+            ],
+            "runToMain": true,
         }
     ]
 }
