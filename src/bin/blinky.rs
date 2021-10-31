@@ -1,7 +1,8 @@
 //! Blinks an LED
 //!
-//! This assumes that LD2 (blue) is connected to pb7 and LD3 (red) is connected
-//! to pb14. This assumption is true for the nucleo-h743zi board.
+//! This assumes that LD1 (green) is connected to pb0, LD2 (yellow) is connected
+//! to pe1 and LD3 (red) is connected to pb14. This assumption is true for the
+//! nucleo-h743zi2 board.
 
 #![no_std]
 #![no_main]
@@ -37,23 +38,51 @@ fn main() -> ! {
     // Acquire the GPIOB peripheral
     let gpiob = dp.GPIOB.split(ccdr.peripheral.GPIOB);
 
-    // Configure gpio B pin 7 as a push-pull output.
-    let mut ld2 = gpiob.pb7.into_push_pull_output();
+    // Configure gpio B pin 0 as a push-pull output.
+    let mut ld1 = gpiob.pb0.into_push_pull_output();
+
+    // Acquire the GPIOE peripheral
+    let gpioe = dp.GPIOE.split(ccdr.peripheral.GPIOE);
+
+    // Configure gpio E pin 1 as a push-pull output.
+    let mut ld2 = gpioe.pe1.into_push_pull_output();
 
     // Configure gpio B pin 14 as a push-pull output.
     let mut ld3 = gpiob.pb14.into_push_pull_output();
     ld3.set_high().unwrap();
 
-
     // Configure the timer to trigger an update every second
     let mut timer = Timer::tim1(dp.TIM1, ccdr.peripheral.TIM1, &ccdr.clocks);
     timer.start(1.hz());
 
-    // Wait for the timer to trigger an update and change the state of the LED
+    let mut count: u8 = 0;
+
+    // Count from 0 to 8 and show the counter in binary bits in the LEDs.
     loop {
-        ld2.set_high().unwrap();
+
+        if (count & 0x01) != 0 {
+            ld1.set_high().unwrap();
+        } else {
+            ld1.set_low().unwrap();
+        }
+
+        if (count & 0x02) != 0 {
+            ld2.set_high().unwrap();
+        } else {
+            ld2.set_low().unwrap();
+        }
+
+        if (count & 0x04) != 0 {
+            ld3.set_high().unwrap();
+        } else {
+            ld3.set_low().unwrap();
+        }
+
         block!(timer.wait()).unwrap();
-        ld2.set_low().unwrap();
-        block!(timer.wait()).unwrap();
+
+        count += 1;
+        if count >= 8 {
+            count = 0;
+        }
     }
 }
