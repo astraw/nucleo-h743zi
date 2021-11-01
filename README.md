@@ -2,12 +2,45 @@
 
 # nucleo-h743zi
 
-Examples programs for nucleo-h743zi board.
+Example programs for the [NUCLEO-H743ZI and
+NUCLEO-H743ZI2](https://www.st.com/en/evaluation-tools/nucleo-h743zi.html)
+boards.
 
-This uses the [stm32h7xx-hal](https://github.com/astraw/stm32h7xx-hal) crate.
+This uses the [stm32h7xx-hal](https://github.com/stm32-rs/stm32h7xx-hal) crate.
 
-Collaboration on this crate is highly welcome as
-are pull requests!
+Collaboration on this crate is highly welcome as are pull requests!
+
+## Project Aim: Facilitate First Steps with Nucleo H743ZI and H743ZI2 Boards and Rust
+
+This repository contains examples and starter material specific to the Nucleo
+H743ZI and H743ZI2 boards and should work "out of the box" with these specific
+boards and demonstrates usage of features on these boards with zero
+configuration or options.
+
+While there is some redundancy with
+[stm32h7xx-hal](https://github.com/stm32-rs/stm32h7xx-hal), the two projects
+have different aims. Here, the goal is to provide an easy on-ramp to usage of
+these boards without covering all possible features or providing a universally
+useful library. For more advanced usage, you are encouraged to take the lessons
+learned here and directly use the
+[stm32h7xx-hal](https://github.com/stm32-rs/stm32h7xx-hal) crate. Of course, as
+mentioned above, we welcome suggested improvements that fit within the project
+aim.
+
+To facilitate ease-of-use with both the Nucleo-H743ZI and Nucleo-H743ZI2 boards,
+the code in this repository should work by default on both boards without
+modification or configuration.
+
+## Differences between the Nucleo H743ZI and H743ZI2 Boards
+
+| Feature | NUCLEO-H743ZI | NUCLEO-H743ZI2 | notes |
+|---------|---------------|----------------|--------|
+| STLINK | V2-1, Cuttable PCB | V3E, Embedded on PCB | see [DB3171, Rev 14](https://www.st.com/resource/en/data_brief/nucleo-l496zg.pdf) |
+| Board reference | [UM1974 User Manual STM32 Nucleo-144 boards (MB1137)](https://www.st.com/resource/en/user_manual/dm00244518-stm32-nucleo144-boards-mb1137-stmicroelectronics.pdf) | [UM2407 User Manual STM32H7 Nucleo-144 boards (MB1364)](https://www.st.com/resource/en/user_manual/dm00499160-stm32h7-nucleo144-boards-mb1364-stmicroelectronics.pdf) ||
+| User LD2 | Blue, connected to PB7 | Yellow, connected to PE1 | |
+
+The code in this repository should work on both boards without modification or
+configuration.
 
 ## Building and running
 
