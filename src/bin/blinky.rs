@@ -1,7 +1,8 @@
 //! Blinks an LED
 //!
-//! This assumes that LD2 (blue) is connected to pb7 and LD3 (red) is connected
-//! to pb14. This assumption is true for the nucleo-h743zi board.
+//! This assumes that LD1 (green) is connected to pb0 and LD3 (red) is connected
+//! to pb14. This assumption is true for the nucleo-h743zi and nucleo-h743zi2
+//! boards.
 
 #![no_std]
 #![no_main]
@@ -37,8 +38,8 @@ fn main() -> ! {
     // Acquire the GPIOB peripheral
     let gpiob = dp.GPIOB.split(ccdr.peripheral.GPIOB);
 
-    // Configure gpio B pin 7 as a push-pull output.
-    let mut ld2 = gpiob.pb7.into_push_pull_output();
+    // Configure gpio B pin 0 as a push-pull output.
+    let mut ld1 = gpiob.pb0.into_push_pull_output();
 
     // Configure gpio B pin 14 as a push-pull output.
     let mut ld3 = gpiob.pb14.into_push_pull_output();
@@ -51,9 +52,9 @@ fn main() -> ! {
 
     // Wait for the timer to trigger an update and change the state of the LED
     loop {
-        ld2.set_high().unwrap();
+        ld1.set_high().unwrap();
         block!(timer.wait()).unwrap();
-        ld2.set_low().unwrap();
+        ld1.set_low().unwrap();
         block!(timer.wait()).unwrap();
     }
 }
