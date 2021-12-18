@@ -20,7 +20,8 @@ configuration or options.
 While there is some redundancy with
 [stm32h7xx-hal](https://github.com/stm32-rs/stm32h7xx-hal), the two projects
 have different aims. Here, the goal is to provide an easy on-ramp to the usage of
-these boards without covering all possible features or providing a universally helpful library. For more advanced usage, you are encouraged to take the lessons
+these boards without covering all possible features or providing a universally helpful 
+library. For more advanced usage, you are encouraged to take the lessons 
 learned here and directly use the
 [stm32h7xx-hal](https://github.com/stm32-rs/stm32h7xx-hal) crate. Of course, as
 mentioned above, we welcome suggested improvements that fit within the project
