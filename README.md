@@ -14,14 +14,13 @@ Collaboration on this crate is highly welcome as are pull requests!
 
 This repository contains examples and starter material specific to the Nucleo
 H743ZI and H743ZI2 boards and should work "out of the box" with these specific
-boards and demonstrates usage of features on these boards with zero
+boards and demonstrates the usage of features on these boards with zero
 configuration or options.
 
 While there is some redundancy with
 [stm32h7xx-hal](https://github.com/stm32-rs/stm32h7xx-hal), the two projects
-have different aims. Here, the goal is to provide an easy on-ramp to usage of
-these boards without covering all possible features or providing a universally
-useful library. For more advanced usage, you are encouraged to take the lessons
+have different aims. Here, the goal is to provide an easy on-ramp to the usage of
+these boards without covering all possible features or providing a universally helpful library. For more advanced usage, you are encouraged to take the lessons
 learned here and directly use the
 [stm32h7xx-hal](https://github.com/stm32-rs/stm32h7xx-hal) crate. Of course, as
 mentioned above, we welcome suggested improvements that fit within the project
@@ -41,6 +40,19 @@ modification or configuration.
 
 The code in this repository should work on both boards without modification or
 configuration.
+
+## Pre-requisists 
+
+You will need the following components installed before building the project.
+
+```
+$ rustup target add thumbv7em-none-eabihf`
+$ rustup component add llvm-tools-preview`
+$ cargo install cargo-binutils`
+```
+This will install a new target for the Rust compiler (`ARM Cortex-M4F` / `Cortex-M7F`) and a Cargo plugin to call `binutils` directly. 
+
+If you also want to debug the program while running on the target, you also need to install `gdb` for the right architecture.
 
 ## Building and running
 
@@ -63,7 +75,6 @@ Flash the device:
 cp target/thumbv7em-none-eabihf/release/blinky.bin /path/to/NODE_H743ZI/
 cp target/thumbv7em-none-eabihf/release/serial.bin /path/to/NODE_H743ZI/
 ```
-
 ## Debugging
 
 Debugging can be performed with tools like `openocd`. A sample `openocd` configuration file
