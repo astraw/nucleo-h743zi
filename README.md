@@ -52,7 +52,7 @@ $ cargo install cargo-binutils`
 ```
 This will install a new target for the Rust compiler (`ARM Cortex-M4F` / `Cortex-M7F`) and a Cargo plugin to call `binutils` directly. 
 
-If you also want to debug the program while running on the target, you also need to install `gdb` for the right architecture.
+For debugging the program, you will need to install a compatible version of `gdb` for your system.
 
 ## Building and running
 
