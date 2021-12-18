@@ -46,9 +46,9 @@ configuration.
 You will need the following components installed before building the project.
 
 ```
-$ rustup target add thumbv7em-none-eabihf`
-$ rustup component add llvm-tools-preview`
-$ cargo install cargo-binutils`
+$ rustup target add thumbv7em-none-eabihf
+$ rustup component add llvm-tools-preview
+$ cargo install cargo-binutils
 ```
 This will install a new target for the Rust compiler (`ARM Cortex-M4F` / `Cortex-M7F`) and a Cargo plugin to call `binutils` directly. 
 
