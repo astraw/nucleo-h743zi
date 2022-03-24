@@ -12,19 +12,23 @@
 #![no_std]
 #![no_main]
 
-use panic_halt as _;
+use panic_probe as _;
+use rtt_target::rprintln;
 
+use core::fmt::Write;
 use stm32h7xx_hal::{
     prelude::*,
-    serial::{self, Serial, Error}
+    serial::{self, Error, Serial},
 };
-use core::fmt::Write;
 
-use embedded_hal::digital::v2::OutputPin;
 use cortex_m_rt::entry;
+use embedded_hal::digital::v2::OutputPin;
 
 #[entry]
 fn main() -> ! {
+    rtt_target::rtt_init_print!(); // You may prefer to initialize another way
+    rprintln!("Starting serial");
+
     // Get access to the device specific peripherals from the peripheral access crate
     let dp = stm32h7xx_hal::stm32::Peripherals::take().unwrap();
 
@@ -58,22 +62,23 @@ fn main() -> ! {
         dp.USART3,
         serial::config::Config::default().baudrate(115200.bps()),
         ccdr.peripheral.USART3,
-        &ccdr.clocks
-    ).unwrap();
+        &ccdr.clocks,
+    )
+    .unwrap();
 
     let (mut tx, mut rx) = serial.split();
 
     // core::fmt::Write is implemented for tx.
     writeln!(tx, "Hello World\r").unwrap();
     writeln!(tx, "Entering echo mode..\r").unwrap();
+    rprintln!("Entering main loop");
     loop {
         // Echo what is received on the serial link.
         match rx.read() {
             Ok(c) => {
                 tx.write(c).unwrap();
             }
-            Err(nb::Error::WouldBlock) => {
-            },
+            Err(nb::Error::WouldBlock) => {}
             Err(nb::Error::Other(err)) => {
                 match err {
                     Error::Framing => {
@@ -84,7 +89,7 @@ fn main() -> ! {
                     }
                 }
                 panic!("");
-            },
+            }
         }
     }
 }

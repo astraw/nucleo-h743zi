@@ -8,14 +8,18 @@
 #![no_main]
 #![no_std]
 
-use panic_halt as _;
+use panic_probe as _;
+use rtt_target::rprintln;
 
-use cortex_m_rt::entry;
-use stm32h7xx_hal::{prelude::*, timer, spi, block, serial};
 use core::fmt::Write;
+use cortex_m_rt::entry;
+use stm32h7xx_hal::{block, prelude::*, serial, spi, timer};
 
 #[entry]
 fn main() -> ! {
+    rtt_target::rtt_init_print!(); // You may prefer to initialize another way
+    rprintln!("Starting spi");
+
     let dp = stm32h7xx_hal::stm32::Peripherals::take().unwrap();
 
     // Constrain and Freeze power
@@ -24,7 +28,11 @@ fn main() -> ! {
 
     // Constrain and Freeze clock
     let rcc = dp.RCC.constrain();
-    let rcc = rcc.use_hse(8.mhz()).bypass_hse().sys_ck(400.mhz()).pll1_q_ck(100.mhz());
+    let rcc = rcc
+        .use_hse(8.mhz())
+        .bypass_hse()
+        .sys_ck(400.mhz())
+        .pll1_q_ck(100.mhz());
     let ccdr = rcc.freeze(pwrcfg, &dp.SYSCFG);
 
     // Acquire the GPIOC peripheral. This also enables the clock for GPIOA in the RCC register
@@ -55,8 +63,9 @@ fn main() -> ! {
         dp.USART3,
         serial::config::Config::default().baudrate(115200.bps()),
         ccdr.peripheral.USART3,
-        &ccdr.clocks
-    ).unwrap();
+        &ccdr.clocks,
+    )
+    .unwrap();
     let (mut tx, _rx) = serial.split();
 
     // Write fixed data
@@ -68,6 +77,7 @@ fn main() -> ! {
 
     // Echo what is received on the SPI
     //let mut received = 0;
+    rprintln!("Entering main loop");
     loop {
         let mut transfer_buf = [0x11u8, 0x22, 0x33];
         match spi.transfer(&mut transfer_buf) {

@@ -7,13 +7,10 @@
 #![no_std]
 #![no_main]
 
-use panic_halt as _;
+use panic_probe as _;
+use rtt_target::rprintln;
 
-use stm32h7xx_hal::{
-    prelude::*,
-    timer::Timer,
-    block
-};
+use stm32h7xx_hal::{block, prelude::*, timer::Timer};
 
 use cortex_m_rt::entry;
 
@@ -21,6 +18,9 @@ use embedded_hal::digital::v2::OutputPin;
 
 #[entry]
 fn main() -> ! {
+    rtt_target::rtt_init_print!(); // You may prefer to initialize another way
+    rprintln!("Starting blinky");
+
     // Get access to the device specific peripherals from the peripheral access crate
     let dp = stm32h7xx_hal::stm32::Peripherals::take().unwrap();
 
@@ -45,12 +45,12 @@ fn main() -> ! {
     let mut ld3 = gpiob.pb14.into_push_pull_output();
     ld3.set_high().unwrap();
 
-
     // Configure the timer to trigger an update every second
     let mut timer = Timer::tim1(dp.TIM1, ccdr.peripheral.TIM1, &ccdr.clocks);
     timer.start(1.hz());
 
     // Wait for the timer to trigger an update and change the state of the LED
+    rprintln!("Entering main loop");
     loop {
         ld1.set_high().unwrap();
         block!(timer.wait()).unwrap();
