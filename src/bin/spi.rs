@@ -87,7 +87,7 @@ fn main() -> ! {
                 writeln!(tx, "Received SPI bytes: {:?}\r", read_bytes).unwrap();
             }
             Err(_) => {
-                panic!("SPI transfer error occured")
+                panic!("SPI transfer error occurred")
             }
         }
         block!(timer.wait()).unwrap();
