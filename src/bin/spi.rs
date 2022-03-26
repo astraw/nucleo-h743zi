@@ -86,8 +86,8 @@ fn main() -> ! {
                 // log the received bytes via the serial port here
                 writeln!(tx, "Received SPI bytes: {:?}\r", read_bytes).unwrap();
             }
-            Err(_) => {
-                panic!("SPI transfer error occurred")
+            Err(e) => {
+                panic!("SPI transfer error occurred: {:?}", e);
             }
         }
         block!(timer.wait()).unwrap();
