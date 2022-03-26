@@ -7,8 +7,10 @@
 #![no_std]
 #![no_main]
 
+use defmt_rtt as _; // global logger
+
+use defmt::info;
 use panic_probe as _;
-use rtt_target::rprintln;
 
 use stm32h7xx_hal::{block, prelude::*, timer::Timer};
 
@@ -18,8 +20,7 @@ use embedded_hal::digital::v2::OutputPin;
 
 #[entry]
 fn main() -> ! {
-    rtt_target::rtt_init_print!(); // You may prefer to initialize another way
-    rprintln!("Starting blinky");
+    info!("Starting blinky");
 
     // Get access to the device specific peripherals from the peripheral access crate
     let dp = stm32h7xx_hal::stm32::Peripherals::take().unwrap();
@@ -49,7 +50,7 @@ fn main() -> ! {
     timer.start(1.hz());
 
     // Wait for the timer to trigger an update and change the state of the LED
-    rprintln!("Entering main loop");
+    info!("Entering main loop");
     loop {
         ld1.set_high().unwrap();
         block!(timer.wait()).unwrap();

@@ -8,8 +8,10 @@
 #![no_main]
 #![no_std]
 
+use defmt_rtt as _; // global logger
+
+use defmt::info;
 use panic_probe as _;
-use rtt_target::rprintln;
 
 use core::fmt::Write;
 use cortex_m_rt::entry;
@@ -17,8 +19,7 @@ use stm32h7xx_hal::{block, prelude::*, serial, spi, timer};
 
 #[entry]
 fn main() -> ! {
-    rtt_target::rtt_init_print!(); // You may prefer to initialize another way
-    rprintln!("Starting spi");
+    info!("Starting spi");
 
     let dp = stm32h7xx_hal::stm32::Peripherals::take().unwrap();
 
@@ -77,7 +78,7 @@ fn main() -> ! {
 
     // Echo what is received on the SPI
     //let mut received = 0;
-    rprintln!("Entering main loop");
+    info!("Entering main loop");
     loop {
         let mut transfer_buf = [0x11u8, 0x22, 0x33];
         match spi.transfer(&mut transfer_buf) {

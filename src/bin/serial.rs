@@ -12,8 +12,10 @@
 #![no_std]
 #![no_main]
 
+use defmt_rtt as _; // global logger
+
+use defmt::info;
 use panic_probe as _;
-use rtt_target::rprintln;
 
 use core::fmt::Write;
 use stm32h7xx_hal::{
@@ -26,8 +28,7 @@ use embedded_hal::digital::v2::OutputPin;
 
 #[entry]
 fn main() -> ! {
-    rtt_target::rtt_init_print!(); // You may prefer to initialize another way
-    rprintln!("Starting serial");
+    info!("Starting serial");
 
     // Get access to the device specific peripherals from the peripheral access crate
     let dp = stm32h7xx_hal::stm32::Peripherals::take().unwrap();
@@ -71,7 +72,7 @@ fn main() -> ! {
     // core::fmt::Write is implemented for tx.
     writeln!(tx, "Hello World\r").unwrap();
     writeln!(tx, "Entering echo mode..\r").unwrap();
-    rprintln!("Entering main loop");
+    info!("Entering main loop");
     loop {
         // Echo what is received on the serial link.
         match rx.read() {
@@ -83,12 +84,13 @@ fn main() -> ! {
                 match err {
                     Error::Framing => {
                         ld2.set_high().unwrap(); // blue
+                        panic!("framing error");
                     }
-                    _ => {
+                    e => {
                         ld3.set_high().unwrap(); // red
+                        panic!("other error {:?}", e);
                     }
                 }
-                panic!("");
             }
         }
     }
