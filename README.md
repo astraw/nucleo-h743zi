@@ -57,6 +57,8 @@ For debugging the program, you will need to install a compatible version of `gdb
 
 ## Building and running
 
+**TODO: Update for probe-run**
+
 Build with:
 
 ```sh
@@ -76,18 +78,54 @@ Flash the device:
 cp target/thumbv7em-none-eabihf/release/blinky.bin /path/to/NODE_H743ZI/
 cp target/thumbv7em-none-eabihf/release/serial.bin /path/to/NODE_H743ZI/
 ```
-## Debugging
 
-Debugging can be performed with tools like `openocd`. A sample `openocd` configuration file
-is provided.
+## Debugging with Knurling (`probe-rs`)
 
-1. Uncomment one of the runners specified in the `.cargo/config` file according to the used operating
-   system and desired debugger.
-2. Run `openocd` in the project root
-3. Run `cargo run --bin blinky` or `cargo run --bin serial`
+We use the Knurling project to facilitate debugging. `probe-rs` can be used to
+debug the device from a host computer and view log messages send using the
+`defmt` infrastructure.
 
-You can also perform debugging with a GUI using VS Code with the Cortex-Debug extension.
-Some configuration files were provided in the `.vscode` folder.
+To see `defmt` messages, compile with the `DEFMT_LOG` environment variable
+set appropriately. (By default, `defmt` will show only error level messages.)
+
+Powershell (Windows)
+```
+$Env:DEFMT_LOG="trace"
+```
+
+Bash (Linux/macOS)
+```
+export DEFMT_LOG=trace
+```
+
+### Probe option 1: onboard STLINKv3
+
+This is the easiest option and works with only a micro-USB cable to your device.
+If `probe-run` returns with `Error: The firmware on the probe is outdated`, you
+can update the STLINKv3 firmware on your Nucleo using a download from
+[st.com](https://www.st.com/en/development-tools/stsw-link007.html).
+
+### Probe option 2: using Raspberry Pi Pico as a CMSIS-DAP probe
+
+Debugging can be performed with a Raspberry Pi Pico board running the
+[DapperMime firmware](https://github.com/majbthrd/DapperMime) to function as an
+inexpensive (but highly capable) CMSIS-DAP probe. In this configuration, the
+STLINKv3 hardware built into the Nucleo will be bypassed.
+
+To setup your Nucleo for this, perform the following steps.
+
+1. Connect the following pins
+
+| Signal | MIPI-10 debug connector (CN5) on NUCLEO-H743ZI2 | Raspberry Pi Pico |
+|---------|---------------|----------------|
+| SWDIO | Pin 2 | GP3 |
+| GND | Pin 3 | GND |
+| SWCLK | Pin 4 | GP2|
+
+2. Hold the STLINKv3 in reset state by using jumper JP1.
+3. Power the Nucleo board by USB charger connected to the STLINK micro USB
+   connector CN1 and setting the jumper JP2 to the CHGR position (from the
+   default STLINK position).
 
 ## License
 
