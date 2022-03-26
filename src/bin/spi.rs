@@ -30,8 +30,8 @@ fn main() -> ! {
     // Constrain and Freeze clock
     let rcc = dp.RCC.constrain();
     let rcc = rcc
-        .use_hse(8.mhz())
-        .bypass_hse()
+        // .use_hse(8.mhz())
+        // .bypass_hse()
         .sys_ck(400.mhz())
         .pll1_q_ck(100.mhz());
     let ccdr = rcc.freeze(pwrcfg, &dp.SYSCFG);
