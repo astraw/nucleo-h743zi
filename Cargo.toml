@@ -14,10 +14,11 @@ cortex-m-rt = "0.6.12"
 cortex-m = "0.7.1"
 embedded-hal = "0.2.6"
 nb = "1.0.0"
-stm32h7xx-hal = { version="0.10.0", features=["stm32h743v"] }
+stm32h7xx-hal = { version="0.10.0", features=["stm32h743v","rt"] }
 defmt = "0.3.1"
 defmt-rtt = "0.3.2"
 panic-probe = { version = "0.3.0", features = ["print-defmt"] }
+cortex-m-rtic = "1.0.0"
 
 [profile.dev]
 debug = true
