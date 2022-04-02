@@ -18,10 +18,7 @@ use defmt::info;
 use panic_probe as _;
 
 use core::fmt::Write;
-use stm32h7xx_hal::{
-    prelude::*,
-    serial::{self, Error, Serial},
-};
+use stm32h7xx_hal::{prelude::*, serial::Error};
 
 use cortex_m_rt::entry;
 use embedded_hal::digital::v2::OutputPin;
@@ -56,16 +53,13 @@ fn main() -> ! {
     let gpiod = dp.GPIOD.split(ccdr.peripheral.GPIOD);
 
     // initialize serial
-    gpiod.pd8.into_alternate_af7();
-    gpiod.pd9.into_alternate_af7();
+    let tx = gpiod.pd8.into_alternate_af7();
+    let rx = gpiod.pd9.into_alternate_af7();
 
-    let serial = Serial::usart3(
-        dp.USART3,
-        serial::config::Config::default().baudrate(115200.bps()),
-        ccdr.peripheral.USART3,
-        &ccdr.clocks,
-    )
-    .unwrap();
+    let serial = dp
+        .USART3
+        .serial((tx, rx), 115200.bps(), ccdr.peripheral.USART3, &ccdr.clocks)
+        .unwrap();
 
     let (mut tx, mut rx) = serial.split();
 

@@ -10,11 +10,11 @@ license = "0BSD"
 repository = "https://github.com/astraw/nucleo-h743zi"
 
 [dependencies]
-cortex-m-rt = "0.6.12"
+cortex-m-rt = "0.6.15"
 cortex-m = "0.7.1"
 embedded-hal = "0.2.6"
 nb = "1.0.0"
-stm32h7xx-hal = { version="0.10.0", features=["stm32h743v","rt"] }
+stm32h7xx-hal = { version="0.11", features=["stm32h743v"] }
 defmt = "0.3.1"
 defmt-rtt = "0.3.2"
 panic-probe = { version = "0.3.0", features = ["print-defmt"] }
