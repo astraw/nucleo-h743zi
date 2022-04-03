@@ -20,7 +20,6 @@
             ],
             "runToMain": true,
         },
-
         {
             "type": "cortex-debug",
             "request": "launch",
@@ -36,6 +35,25 @@
                 "./openocd.cfg"
             ],
             "runToMain": true,
+        },
+        {
+            "type": "probe-rs-debug",
+            "request": "launch",
+            "name": "probe_rs Debug Blinky",
+            "cwd": "${workspaceFolder}",
+            "preLaunchTask": "cargo build blinky",
+            "programBinary": "${workspaceFolder}/target/thumbv7em-none-eabihf/debug/blinky",
+            "chip": "STM32H743ZITx",
+            "connectUnderReset": true,
+            "runtimeExecutable": "probe-rs-debugger",
+            "runtimeArgs": [
+                "debug"
+            ],
+            "coreIndex": 0,
+            "flashingEnabled": true,
+            "resetAfterFlashing": true,
+            "haltAfterReset": true,
+            "consoleLogLevel": "Debug", //Error, Warn, Info, Debug, Trace
         }
     ]
 }
