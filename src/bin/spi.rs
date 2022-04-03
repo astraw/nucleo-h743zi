@@ -10,10 +10,9 @@
 
 use defmt_rtt as _; // global logger
 
-use defmt::info;
+use defmt::{debug, info};
 use panic_probe as _;
 
-use core::fmt::Write;
 use cortex_m_rt::entry;
 use stm32h7xx_hal::{block, prelude::*, spi, timer};
 
@@ -36,7 +35,7 @@ fn main() -> ! {
         .pll1_q_ck(100.mhz());
     let ccdr = rcc.freeze(pwrcfg, &dp.SYSCFG);
 
-    // Acquire the GPIOC peripheral. This also enables the clock for GPIOA in the RCC register
+    // Acquire the GPIOA peripheral. This also enables the clock for GPIOA in the RCC register
     let gpioa = dp.GPIOA.split(ccdr.peripheral.GPIOA);
 
     // See p.68 STM32Nucleo144 boards datasheet and p.90 STM32h743xI/G datasheet
@@ -44,7 +43,7 @@ fn main() -> ! {
     let miso = gpioa.pa6.into_alternate_af5();
     let mosi = gpioa.pa7.into_alternate_af5();
 
-    // Initialise the SPI peripheral.
+    // Initialize the SPI peripheral.
     let mut spi = dp.SPI1.spi(
         (sck, miso, mosi),
         spi::MODE_0,
@@ -53,35 +52,24 @@ fn main() -> ! {
         &ccdr.clocks,
     );
 
-    // Acquire the GPIOD peripheral
-    let gpiod = dp.GPIOD.split(ccdr.peripheral.GPIOD);
-
-    // initialize serial
-    let tx = gpiod.pd8.into_alternate_af7();
-    let rx = gpiod.pd9.into_alternate_af7();
-
-    let serial = dp
-        .USART3
-        .serial((tx, rx), 115200.bps(), ccdr.peripheral.USART3, &ccdr.clocks)
-        .unwrap();
-    let (mut tx, _rx) = serial.split();
-
     // Write fixed data
     spi.write(&[0x11u8, 0x22, 0x33]).unwrap();
+    debug!("Wrote SPI bytes");
 
     // Configure the timer to trigger an update every second
     let mut timer = timer::Timer::tim1(dp.TIM1, ccdr.peripheral.TIM1, &ccdr.clocks);
     timer.start(1.hz());
 
     // Echo what is received on the SPI
-    //let mut received = 0;
     info!("Entering main loop");
     loop {
         let mut transfer_buf = [0x11u8, 0x22, 0x33];
         match spi.transfer(&mut transfer_buf) {
             Ok(read_bytes) => {
-                // log the received bytes via the serial port here
-                writeln!(tx, "Received SPI bytes: {:?}\r", read_bytes).unwrap();
+                // Log the received bytes. Currently this returns bytes (0x00)
+                // with no error even when no SPI is transmitting. TODO: figure
+                // out why and fix it.
+                debug!("Received SPI bytes: {:?}\r", read_bytes);
             }
             Err(e) => {
                 panic!("SPI transfer error occurred: {:?}", e);
