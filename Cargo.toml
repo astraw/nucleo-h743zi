@@ -2,12 +2,12 @@
 name = "nucleo-h743zi"
 version = "0.1.0"
 authors = ["Andrew Straw <strawman@astraw.com>"]
-edition = "2018"
 categories = ["embedded", "hardware-support", "no-std"]
 description = "Example programs for nucleo-H743zi and nucleo-H743zi2 boards"
 keywords = ["arm", "cortex-m", "stm32h7xx", "hal"]
 license = "0BSD"
 repository = "https://github.com/astraw/nucleo-h743zi"
+edition = "2021"
 
 [dependencies]
 cortex-m-rt = "0.7.1"
