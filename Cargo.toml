@@ -10,7 +10,7 @@ license = "0BSD"
 repository = "https://github.com/astraw/nucleo-h743zi"
 
 [dependencies]
-cortex-m-rt = "0.6.15"
+cortex-m-rt = "0.7.1"
 cortex-m = "0.7.1"
 embedded-hal = "0.2.6"
 nb = "1.0.0"
