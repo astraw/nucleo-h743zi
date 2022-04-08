@@ -1,6 +1,6 @@
 [package]
 name = "nucleo-h743zi"
-version = "0.1.0"
+version = "0.2.0"
 authors = ["Andrew Straw <strawman@astraw.com>"]
 categories = ["embedded", "hardware-support", "no-std"]
 description = "Example programs for nucleo-H743zi and nucleo-H743zi2 boards"
