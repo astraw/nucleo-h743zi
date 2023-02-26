@@ -39,9 +39,9 @@ fn main() -> ! {
     let gpioa = dp.GPIOA.split(ccdr.peripheral.GPIOA);
 
     // See p.68 STM32Nucleo144 boards datasheet and p.90 STM32h743xI/G datasheet
-    let sck = gpioa.pa5.into_alternate_af5();
-    let miso = gpioa.pa6.into_alternate_af5();
-    let mosi = gpioa.pa7.into_alternate_af5();
+    let sck = gpioa.pa5.into_alternate::<5>();
+    let miso = gpioa.pa6.into_alternate();
+    let mosi = gpioa.pa7.into_alternate();
 
     // Initialize the SPI peripheral.
     let mut spi = dp.SPI1.spi(
