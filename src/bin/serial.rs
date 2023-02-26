@@ -21,7 +21,6 @@ use core::fmt::Write;
 use stm32h7xx_hal::{prelude::*, serial::Error};
 
 use cortex_m_rt::entry;
-use embedded_hal::digital::v2::OutputPin;
 
 #[entry]
 fn main() -> ! {
@@ -77,11 +76,11 @@ fn main() -> ! {
             Err(nb::Error::Other(err)) => {
                 match err {
                     Error::Framing => {
-                        ld2.set_high().unwrap(); // blue
+                        ld2.set_high(); // blue
                         panic!("framing error");
                     }
                     e => {
-                        ld3.set_high().unwrap(); // red
+                        ld3.set_high(); // red
                         panic!("other error {:?}", e);
                     }
                 }

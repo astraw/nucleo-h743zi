@@ -16,8 +16,6 @@ use stm32h7xx_hal::{block, prelude::*, timer::Timer};
 
 use cortex_m_rt::entry;
 
-use embedded_hal::digital::v2::OutputPin;
-
 #[entry]
 fn main() -> ! {
     info!("Starting blinky");
@@ -43,18 +41,18 @@ fn main() -> ! {
 
     // Configure gpio B pin 14 as a push-pull output.
     let mut ld3 = gpiob.pb14.into_push_pull_output();
-    ld3.set_high().unwrap();
+    ld3.set_high();
 
     // Configure the timer to trigger an update every second
     let mut timer = Timer::tim1(dp.TIM1, ccdr.peripheral.TIM1, &ccdr.clocks);
-    timer.start(1.hz());
+    timer.start(1.Hz());
 
     // Wait for the timer to trigger an update and change the state of the LED
     info!("Entering main loop");
     loop {
-        ld1.set_high().unwrap();
+        ld1.set_high();
         block!(timer.wait()).unwrap();
-        ld1.set_low().unwrap();
+        ld1.set_low();
         block!(timer.wait()).unwrap();
     }
 }

@@ -14,7 +14,7 @@ cortex-m-rt = "0.7.1"
 cortex-m = { version = "0.7.7", features = ["critical-section-single-core"]}
 embedded-hal = "0.2.6"
 nb = "1.0.0"
-stm32h7xx-hal = { version="0.11", features=["stm32h743v"] }
+stm32h7xx-hal = { version="0.13.1", features=["stm32h743v"] }
 defmt = "0.3.1"
 defmt-rtt = "0.4.0"
 panic-probe = { version = "0.3.0", features = ["print-defmt"] }

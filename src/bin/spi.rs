@@ -31,8 +31,8 @@ fn main() -> ! {
     let rcc = rcc
         // .use_hse(8.mhz())
         // .bypass_hse()
-        .sys_ck(400.mhz())
-        .pll1_q_ck(100.mhz());
+        .sys_ck(400.MHz())
+        .pll1_q_ck(100.MHz());
     let ccdr = rcc.freeze(pwrcfg, &dp.SYSCFG);
 
     // Acquire the GPIOA peripheral. This also enables the clock for GPIOA in the RCC register
@@ -47,7 +47,7 @@ fn main() -> ! {
     let mut spi = dp.SPI1.spi(
         (sck, miso, mosi),
         spi::MODE_0,
-        1.mhz(),
+        1.MHz(),
         ccdr.peripheral.SPI1,
         &ccdr.clocks,
     );
@@ -58,7 +58,7 @@ fn main() -> ! {
 
     // Configure the timer to trigger an update every second
     let mut timer = timer::Timer::tim1(dp.TIM1, ccdr.peripheral.TIM1, &ccdr.clocks);
-    timer.start(1.hz());
+    timer.start(1.Hz());
 
     // Echo what is received on the SPI
     info!("Entering main loop");
