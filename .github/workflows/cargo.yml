@@ -8,12 +8,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - uses: actions-rs/toolchain@v1
+      - uses: dtolnay/rust-toolchain@master
         with:
           toolchain: stable
           # Build for Cortex-M7F with FPU support
-          target: thumbv7em-none-eabihf
-          override: true
+          targets: thumbv7em-none-eabihf
       - uses: actions-rs/cargo@v1
         with:
           use-cross: true
